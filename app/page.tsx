@@ -46,7 +46,7 @@ export default function HomePage() {
               {post.coverImage && <img src={post.coverImage} alt={post.title} className="w-full h-44 object-cover rounded-md mb-4" />}
               <h2 className="text-xl font-semibold mb-2">{post.title}</h2>
               <p className="text-gray-700 mb-3">{post.excerpt}</p>
-              <Link href={`/blog/${post.slug}`} className="text-blue-600 hover:text-blue-800 font-medium">
+              <Link href={`/blog?slug=${post.slug}`} className="text-blue-600 hover:text-blue-800 font-medium">
                 Read more &rarr;
               </Link>
             </article>
