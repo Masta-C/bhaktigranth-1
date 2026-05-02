@@ -36,6 +36,15 @@ yarn-error.log*
 # vercel
 .vercel
 
+# firebase
+.firebase/
+
+# local env (keep .env.example committed)
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
