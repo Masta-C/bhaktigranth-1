@@ -3,9 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Image from "@tiptap/extension-image";
-import Link from "@tiptap/extension-link";
 import Placeholder from "@tiptap/extension-placeholder";
-import Underline from "@tiptap/extension-underline";
 import { useEffect, useCallback } from "react";
 
 interface TipTapEditorProps {
@@ -42,10 +40,10 @@ function ToolbarButton({
 export default function TipTapEditor({ content, onChange, placeholder }: TipTapEditorProps) {
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Underline,
+      StarterKit.configure({
+        link: { openOnClick: false },
+      }),
       Image.configure({ inline: false, allowBase64: true }),
-      Link.configure({ openOnClick: false }),
       Placeholder.configure({ placeholder: placeholder ?? "Start writing…" }),
     ],
     content,

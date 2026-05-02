@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
   try {
     if (name.endsWith(".pdf")) {
       // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require("pdf-parse/lib/pdf-parse");
+      const pdfParse = require("pdf-parse");
       const data = await pdfParse(buffer);
       const html = data.text
         .split(/\n{2,}/)
