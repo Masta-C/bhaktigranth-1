@@ -15,6 +15,11 @@ export interface PostServerMeta {
   category: string;
 }
 
+export interface PostServerFull extends PostServerMeta {
+  content: string;
+  publishedAt: string | null;
+}
+
 export async function getPostMetaBySlug(slug: string): Promise<PostServerMeta | null> {
   try {
     const res = await fetch(`${BASE_URL}:runQuery`, {
@@ -44,6 +49,48 @@ export async function getPostMetaBySlug(slug: string): Promise<PostServerMeta | 
 
     const f: FirestoreFields = doc.fields ?? {};
     return { slug: str(f, "slug"), title: str(f, "title"), excerpt: str(f, "excerpt"), coverImageUrl: str(f, "coverImageUrl"), category: str(f, "category") };
+  } catch {
+    return null;
+  }
+}
+
+export async function getPostFullBySlug(slug: string): Promise<PostServerFull | null> {
+  try {
+    const res = await fetch(`${BASE_URL}:runQuery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        structuredQuery: {
+          from: [{ collectionId: "posts" }],
+          where: {
+            compositeFilter: {
+              op: "AND",
+              filters: [
+                { fieldFilter: { field: { fieldPath: "slug" }, op: "EQUAL", value: { stringValue: slug } } },
+                { fieldFilter: { field: { fieldPath: "status" }, op: "EQUAL", value: { stringValue: "published" } } },
+              ],
+            },
+          },
+          limit: 1,
+        },
+      }),
+      next: { revalidate: 60 },
+    } as RequestInit);
+
+    const data = await res.json();
+    const doc = data[0]?.document;
+    if (!doc) return null;
+
+    const f: FirestoreFields = doc.fields ?? {};
+    return {
+      slug: str(f, "slug"),
+      title: str(f, "title"),
+      excerpt: str(f, "excerpt"),
+      coverImageUrl: str(f, "coverImageUrl"),
+      category: str(f, "category"),
+      content: str(f, "content"),
+      publishedAt: f.publishedAt?.timestampValue ?? null,
+    };
   } catch {
     return null;
   }

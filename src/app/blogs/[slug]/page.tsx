@@ -1,5 +1,6 @@
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import { getPostMetaBySlug } from "@/lib/firestore-server";
+import { getPostMetaBySlug, getPostFullBySlug } from "@/lib/firestore-server";
 import BlogPostContent from "@/components/BlogPostContent";
 
 export async function generateMetadata(
@@ -35,5 +36,9 @@ export default async function BlogPostPage(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  return <BlogPostContent slug={slug} />;
+  const post = await getPostFullBySlug(slug);
+
+  if (!post) notFound();
+
+  return <BlogPostContent post={post} />;
 }
