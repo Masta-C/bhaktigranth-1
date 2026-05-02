@@ -1,34 +1,42 @@
-export default function AdminPage() {
-  return (
-    <div className="max-w-5xl mx-auto px-6 py-16">
-      <div className="mb-16">
-        <p className="text-xs font-medium tracking-widest text-gray-400 uppercase mb-4">Protected</p>
-        <h1 className="font-serif text-4xl font-bold mb-4">Admin</h1>
-        <p className="text-gray-500 max-w-lg leading-relaxed">
-          This area will be protected with Firebase Auth in Stage 4. For now, it is a placeholder.
-        </p>
-      </div>
+"use client";
 
-      <div className="grid md:grid-cols-3 gap-8 mb-16">
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { getAllPosts, getAllVlogs, getPendingQnA } from "@/lib/firestore";
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({ posts: 0, vlogs: 0, pending: 0 });
+
+  useEffect(() => {
+    Promise.all([getAllPosts(), getAllVlogs(), getPendingQnA()]).then(
+      ([posts, vlogs, pending]) => setStats({ posts: posts.length, vlogs: vlogs.length, pending: pending.length })
+    );
+  }, []);
+
+  return (
+    <div>
+      <h1 className="font-serif text-3xl font-bold mb-10">Dashboard</h1>
+
+      <div className="grid grid-cols-3 gap-6 mb-12">
         {[
-          { label: "Blog Posts", value: "—", note: "via Sanity Studio" },
-          { label: "Vlogs", value: "—", note: "via Sanity Studio" },
-          { label: "Pending Questions", value: "—", note: "via Firestore" },
-        ].map(({ label, value, note }) => (
-          <div key={label} className="border border-gray-100 p-6">
+          { label: "Blog Posts", value: stats.posts, href: "/admin/posts" },
+          { label: "Vlogs", value: stats.vlogs, href: "/admin/vlogs" },
+          { label: "Pending Q&A", value: stats.pending, href: "/admin/qna" },
+        ].map(({ label, value, href }) => (
+          <Link key={label} href={href} className="border border-gray-100 p-6 hover:border-black transition-colors">
             <p className="text-xs font-medium tracking-widest text-gray-400 uppercase mb-3">{label}</p>
-            <p className="font-serif text-4xl font-bold mb-1">{value}</p>
-            <p className="text-xs text-gray-400">{note}</p>
-          </div>
+            <p className="font-serif text-4xl font-bold">{value}</p>
+          </Link>
         ))}
       </div>
 
-      <div className="border border-gray-100 p-8 bg-gray-50">
-        <h2 className="font-serif text-xl font-bold mb-4">Admin Panel</h2>
-        <p className="text-sm text-gray-500 leading-relaxed">
-          Authentication and full admin functionality will be built in Stage 4.
-          This will include Q&amp;A moderation, site stats, and quick links to Sanity Studio.
-        </p>
+      <div className="flex gap-4">
+        <Link href="/admin/posts/new" className="bg-black text-white text-sm font-medium px-6 py-3 hover:opacity-70 transition-opacity">
+          + New Blog Post
+        </Link>
+        <Link href="/admin/vlogs/new" className="border border-black text-sm font-medium px-6 py-3 hover:bg-black hover:text-white transition-colors">
+          + Add Vlog
+        </Link>
       </div>
     </div>
   );
