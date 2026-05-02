@@ -1,4 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
+import { PDFParse, VerbosityLevel } from "pdf-parse";
+import { getDocument, GlobalWorkerOptions } from "pdfjs-dist/legacy/build/pdf.mjs";
+
+// Point pdfjs to its bundled worker file — available in node_modules at runtime
+GlobalWorkerOptions.workerSrc =
+  `file://${process.cwd()}/node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs`;
 
 export async function POST(req: NextRequest) {
   const formData = await req.formData();
@@ -14,15 +20,16 @@ export async function POST(req: NextRequest) {
 
   try {
     if (name.endsWith(".pdf")) {
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const pdfParse = require("pdf-parse");
-      const data = await pdfParse(buffer);
-      const html = data.text
+      const parser = new PDFParse({ data: buffer, verbosity: VerbosityLevel.ERRORS });
+      const result = await parser.getText();
+
+      const html = result.text
         .split(/\n{2,}/)
-        .map((block: string) => block.trim())
-        .filter(Boolean)
-        .map((block: string) => `<p>${block.replace(/\n/g, " ")}</p>`)
+        .map((block: string) => block.replace(/\n/g, " ").trim())
+        .filter((block: string) => block && !block.match(/^--\s*\d+\s*of\s*\d+\s*--$/))
+        .map((block: string) => `<p>${block}</p>`)
         .join("");
+
       return NextResponse.json({ content: html });
     }
 
