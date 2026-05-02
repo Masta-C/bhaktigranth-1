@@ -23,7 +23,7 @@ export default function AdminPostsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-serif text-3xl font-bold">Blog Posts</h1>
-        <Link href="/admin/posts/new" className="bg-black text-white text-sm font-medium px-5 py-2.5 hover:opacity-70 transition-opacity">
+        <Link href="/admin/posts/new" className="bg-black text-sm font-medium px-5 py-2.5 hover:opacity-70 transition-opacity" style={{ color: "white" }}>
           + New Post
         </Link>
       </div>

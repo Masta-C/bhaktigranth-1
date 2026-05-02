@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import { getPostById, updatePost } from "@/lib/firestore";
+import FileImporter from "@/components/FileImporter";
 
 const TipTapEditor = dynamic(() => import("@/components/TipTapEditor"), { ssr: false });
 
@@ -125,6 +126,11 @@ export default function EditPostPage() {
             className="w-full border border-gray-200 px-4 py-3 text-sm focus:outline-none focus:border-black transition-colors resize-none"
           />
         </div>
+
+        <FileImporter
+          hasContent={content.length > 0}
+          onExtracted={(html) => setContent(html)}
+        />
 
         <div>
           <label className="block text-xs font-medium tracking-wide text-gray-600 uppercase mb-2">Content</label>

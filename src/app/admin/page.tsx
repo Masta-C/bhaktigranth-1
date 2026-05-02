@@ -31,10 +31,10 @@ export default function AdminDashboard() {
       </div>
 
       <div className="flex gap-4">
-        <Link href="/admin/posts/new" className="bg-black text-white text-sm font-medium px-6 py-3 hover:opacity-70 transition-opacity">
+        <Link href="/admin/posts/new" className="bg-black text-sm font-medium px-6 py-3 hover:opacity-70 transition-opacity" style={{ color: "white" }}>
           + New Blog Post
         </Link>
-        <Link href="/admin/vlogs/new" className="border border-black text-sm font-medium px-6 py-3 hover:bg-black hover:text-white transition-colors">
+        <Link href="/admin/vlogs/new" className="border border-black text-sm font-medium px-6 py-3 hover:opacity-70 transition-opacity" style={{ color: "black" }}>
           + Add Vlog
         </Link>
       </div>

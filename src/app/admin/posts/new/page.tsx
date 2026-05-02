@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { createPost } from "@/lib/firestore";
+import FileImporter from "@/components/FileImporter";
 
 const TipTapEditor = dynamic(() => import("@/components/TipTapEditor"), { ssr: false });
 
@@ -118,12 +119,17 @@ export default function NewPostPage() {
           />
         </div>
 
+        <FileImporter
+          hasContent={content.length > 0}
+          onExtracted={(html) => setContent(html)}
+        />
+
         <div>
           <label className="block text-xs font-medium tracking-wide text-gray-600 uppercase mb-2">Content</label>
           <TipTapEditor
             content={content}
             onChange={setContent}
-            placeholder="Write your post here…"
+            placeholder="Write your post here, or import from a file above…"
           />
         </div>
       </div>

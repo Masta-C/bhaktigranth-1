@@ -23,7 +23,7 @@ export default function AdminVlogsPage() {
     <div>
       <div className="flex items-center justify-between mb-8">
         <h1 className="font-serif text-3xl font-bold">Vlogs</h1>
-        <Link href="/admin/vlogs/new" className="bg-black text-white text-sm font-medium px-5 py-2.5 hover:opacity-70 transition-opacity">
+        <Link href="/admin/vlogs/new" className="bg-black text-sm font-medium px-5 py-2.5 hover:opacity-70 transition-opacity" style={{ color: "white" }}>
           + Add Vlog
         </Link>
       </div>

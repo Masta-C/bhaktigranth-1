@@ -45,11 +45,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <Link
                 key={href}
                 href={href}
-                className={`text-sm py-2 px-3 rounded transition-colors ${
-                  isActive ? "bg-black text-white" : "text-gray-600 hover:text-black hover:bg-gray-50"
+                className={`block text-sm py-2 px-3 rounded transition-colors ${
+                  isActive ? "bg-black" : "hover:bg-gray-50"
                 }`}
+                style={{ color: isActive ? "white" : undefined }}
               >
-                {label}
+                <span className={isActive ? "" : "text-gray-600 hover:text-black"}>
+                  {label}
+                </span>
               </Link>
             );
           })}
