@@ -20,7 +20,7 @@ export default function NewPostPage() {
   const [category, setCategory] = useState("");
   const [coverImageUrl, setCoverImageUrl] = useState("");
   const [content, setContent] = useState("");
-  const [status, setStatus] = useState<"draft" | "published">("draft");
+  const [status, setStatus] = useState<"draft" | "published">("published");
   const [saving, setSaving] = useState(false);
 
   const handleTitleChange = (val: string) => {

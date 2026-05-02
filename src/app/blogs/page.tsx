@@ -11,7 +11,9 @@ export default function BlogsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getPublishedPosts().then((p) => { setPosts(p); setLoading(false); });
+    getPublishedPosts()
+      .then((p) => { setPosts(p); setLoading(false); })
+      .catch((err) => { console.error("getPublishedPosts error:", err); setLoading(false); });
   }, []);
 
   return (
