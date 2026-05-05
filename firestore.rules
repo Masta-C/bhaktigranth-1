@@ -14,6 +14,23 @@ service cloud.firestore {
       allow write: if request.auth != null;
     }
 
+    // Ebooks — published ebooks readable by anyone (no fileUrl exposed); authenticated admin can read all
+    match /ebooks/{ebookId} {
+      allow read: if resource.data.status == "published" || request.auth != null;
+      allow write: if request.auth != null;
+    }
+
+    // Ebook downloads — admin can read all; public create via API only (API route enforces validation)
+    match /ebook_downloads/{downloadId} {
+      allow read: if request.auth != null;
+      allow create: if request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() > 0
+                    && request.resource.data.ebookId is string;
+      allow update, delete: if request.auth != null;
+    }
+
     // Q&A — anyone can read published; authenticated admin can read all; public can submit
     match /qna/{qnaId} {
       allow read: if resource.data.status == "published" || request.auth != null;

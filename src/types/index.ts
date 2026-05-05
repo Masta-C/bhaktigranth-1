@@ -21,6 +21,27 @@ export interface Vlog {
   publishedAt: Date | null;
 }
 
+export interface Ebook {
+  id: string;
+  title: string;
+  description: string;
+  coverImageUrl: string;
+  fileUrl: string;
+  category: string;
+  status: "draft" | "published";
+  createdAt: Date;
+  publishedAt: Date | null;
+}
+
+export interface EbookDownload {
+  id: string;
+  ebookId: string;
+  ebookTitle: string;
+  name: string;
+  email: string;
+  downloadedAt: Date;
+}
+
 export interface QnAItem {
   id: string;
   question: string;

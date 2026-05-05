@@ -13,7 +13,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "./firebase";
-import type { Post, Vlog, QnAItem } from "@/types";
+import type { Post, Vlog, QnAItem, Ebook, EbookDownload } from "@/types";
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -270,4 +270,88 @@ export async function answerAndPublishQnA(
 
 export async function deleteQnA(id: string): Promise<void> {
   await deleteDoc(doc(db, "qna", id));
+}
+
+// ── Ebooks ─────────────────────────────────────────────────────────────────
+
+function ebookFromDoc(d: { id: string; data: () => Record<string, unknown> }): Ebook {
+  const data = d.data();
+  return {
+    id: d.id,
+    title: data.title as string ?? "",
+    description: data.description as string ?? "",
+    coverImageUrl: data.coverImageUrl as string ?? "",
+    fileUrl: data.fileUrl as string ?? "",
+    category: data.category as string ?? "",
+    status: data.status as "draft" | "published",
+    createdAt: toDate(data.createdAt),
+    publishedAt: data.publishedAt ? toDate(data.publishedAt) : null,
+  };
+}
+
+export async function getPublishedEbooks(): Promise<Ebook[]> {
+  const q = query(
+    collection(db, "ebooks"),
+    where("status", "==", "published"),
+    orderBy("publishedAt", "desc")
+  );
+  const snap = await getDocs(q);
+  return snap.docs.map(ebookFromDoc);
+}
+
+export async function getAllEbooks(): Promise<Ebook[]> {
+  const q = query(collection(db, "ebooks"), orderBy("createdAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map(ebookFromDoc);
+}
+
+export async function getEbookById(id: string): Promise<Ebook | null> {
+  const snap = await getDoc(doc(db, "ebooks", id));
+  if (!snap.exists()) return null;
+  return ebookFromDoc({ id: snap.id, data: snap.data });
+}
+
+export async function createEbook(
+  data: Omit<Ebook, "id" | "createdAt" | "publishedAt">
+): Promise<string> {
+  const ref = await addDoc(collection(db, "ebooks"), {
+    ...data,
+    createdAt: serverTimestamp(),
+    publishedAt: data.status === "published" ? serverTimestamp() : null,
+  });
+  return ref.id;
+}
+
+export async function updateEbook(
+  id: string,
+  data: Partial<Omit<Ebook, "id" | "createdAt">>
+): Promise<void> {
+  const updates: Record<string, unknown> = { ...data };
+  if (data.status === "published") {
+    const existing = await getEbookById(id);
+    if (existing && !existing.publishedAt) {
+      updates.publishedAt = serverTimestamp();
+    }
+  }
+  await updateDoc(doc(db, "ebooks", id), updates);
+}
+
+export async function deleteEbook(id: string): Promise<void> {
+  await deleteDoc(doc(db, "ebooks", id));
+}
+
+export async function getAllDownloads(): Promise<EbookDownload[]> {
+  const q = query(collection(db, "ebook_downloads"), orderBy("downloadedAt", "desc"));
+  const snap = await getDocs(q);
+  return snap.docs.map((d) => {
+    const data = d.data();
+    return {
+      id: d.id,
+      ebookId: data.ebookId ?? "",
+      ebookTitle: data.ebookTitle ?? "",
+      name: data.name ?? "",
+      email: data.email ?? "",
+      downloadedAt: toDate(data.downloadedAt),
+    } as EbookDownload;
+  });
 }
